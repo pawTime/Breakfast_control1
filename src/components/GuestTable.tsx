@@ -105,139 +105,137 @@ const GuestTable: React.FC<GuestTableProps> = ({ guests, onUpdateGuest }) => {
       </Card>
 
       {/* Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Guest Data</DialogTitle>
-          </DialogHeader>
-          {editingGuest && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="room">Room Number</Label>
-                  <Input
-                    id="room"
-                    value={editingGuest.room}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, room: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="name">Guest Name</Label>
-                  <Input
-                    id="name"
-                    value={editingGuest.name}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, name: e.target.value })}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="adults">Adult</Label>
-                  <Input
-                    id="adults"
-                    type="number"
-                    min="0"
-                    value={editingGuest.adults}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, adults: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="children">Children</Label>
-                  <Input
-                    id="children"
-                    type="number"
-                    min="0"
-                    value={editingGuest.children}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, children: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="entitled">Entitled</Label>
-                  <Input
-                    id="entitled"
-                    type="number"
-                    min="0"
-                    value={editingGuest.entitled}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, entitled: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="consumed">Current Consumption</Label>
-                  <Input
-                    id="consumed"
-                    type="number"
-                    min="0"
-                    max={editingGuest.entitled}
-                    value={editingGuest.consumed}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, consumed: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="reservationId">Reservation ID</Label>
-                  <Input
-                    id="reservationId"
-                    value={editingGuest.reservationId}
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="numberOfPax">Number of Pax</Label>
-                  <Input
-                    id="numberOfPax"
-                    type="number"
-                    min="0"
-                    value={editingGuest.numberOfPax}
-                    onChange={(e) => setEditingGuest({ ...editingGuest, numberOfPax: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="restaurantLocation">Restaurant Location</Label>
-                <Select
-                  value={editingGuest.restaurantLocation}
-                  onValueChange={(value) => setEditingGuest({ ...editingGuest, restaurantLocation: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a restaurant location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Restaurant Utama">Main Restaurant</SelectItem>
-                    <SelectItem value="Restaurant Kedua">Second Restaurant</SelectItem>
-                    <SelectItem value="Restaurant Ke 3">Restaurant 3</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-             <div>
-              <Label htmlFor="transactionSummary">Transaction Summary</Label>
-              <Input
-                id="transactionSummary"
-                value={editingGuest.transactionSummary}
-                onChange={(e) =>
-                  setEditingGuest({ ...editingGuest, transactionSummary: e.target.value })
-                }
-                placeholder="Example: Amount per person: Rp 50,000 | Total: Rp 200,000"
-                readOnly
-              />
+<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+  <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+    <DialogHeader>
+      <DialogTitle className="text-lg font-bold text-hotel-primary">
+        Update Breakfast Data
+      </DialogTitle>
+    </DialogHeader>
+    {editingGuest && (
+      <div className="space-y-6">
+        
+        {/* Guest Info */}
+        <div className="border-l-4 border-hotel-primary bg-gray-50 p-4 rounded-md shadow-sm">
+          <div className="flex justify-between">
+            <div>
+              <p className="text-sm">
+                Room: <span className="font-semibold text-hotel-primary">{editingGuest.room}</span>
+              </p>
+              <p className="text-sm">
+                Reservation: <span className="font-medium">{editingGuest.reservationId}</span>
+              </p>
+              <p className="text-sm">
+                Guest: <span className="font-medium">{editingGuest.name}</span>
+              </p>
             </div>
-
-
-              <Button onClick={handleSave} className="w-full">
-                Save Changes
-              </Button>
+            <div className="text-right text-sm space-y-1">
+              <p>👤 {editingGuest.adults} Adults</p>
+              <p>🧒 {editingGuest.children} Children</p>
+              <p>🎟 {editingGuest.entitled} Entitled</p>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+
+        {/* Current Consumption */}
+        <div>
+          <Label className="flex items-center gap-2 text-sm font-medium">
+            🍽 Current Consumption
+          </Label>
+          <Input
+            type="number"
+            min={0}
+            max={editingGuest.entitled}
+            value={editingGuest.consumed}
+            onChange={(e) =>
+              setEditingGuest({
+                ...editingGuest,
+                consumed: parseInt(e.target.value) || 0,
+              })
+            }
+            className="mt-1"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Remaining Quota: {editingGuest.entitled - editingGuest.consumed}
+          </p>
+        </div>
+
+        {/* Number of guests */}
+        <div>
+          <Label className="flex items-center gap-2 text-sm font-medium">
+            👥 Number of guests
+          </Label>
+          <Input
+            type="number"
+            min={0}
+            max={editingGuest.entitled - editingGuest.consumed}
+            value={editingGuest.numberOfPax}
+            onChange={(e) =>
+              setEditingGuest({
+                ...editingGuest,
+                numberOfPax: parseInt(e.target.value) || 0,
+              })
+            }
+            className="mt-1"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Maximum {editingGuest.entitled - editingGuest.consumed} remaining
+            guests
+          </p>
+        </div>
+
+        {/* Restaurant Location */}
+        <div>
+          <Label className="flex items-center gap-2 text-sm font-medium">
+            📍 Restaurant Location
+          </Label>
+          <Select
+            value={editingGuest.restaurantLocation}
+            onValueChange={(value) =>
+              setEditingGuest({ ...editingGuest, restaurantLocation: value })
+            }
+          >
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Cafe Lobby">Cafe Lobby</SelectItem>
+              <SelectItem value="Restaurant Utama">Main Restaurant</SelectItem>
+              <SelectItem value="Restaurant Kedua">Second Restaurant</SelectItem>
+              <SelectItem value="Restaurant Ke 3">Restaurant 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Transaction Summary */}
+        <div className="border rounded-lg p-4 bg-white shadow-sm">
+          <h4 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            💳 Transaction Summary
+          </h4>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="text-gray-600">Price per guest:</div>
+            <div className="font-medium text-right">Rp 85.000</div>
+
+            <div className="text-gray-600">Guests:</div>
+            <div className="font-medium text-right">{editingGuest.numberOfPax}</div>
+
+            <div className="col-span-2 border-t mt-2 pt-2 flex justify-between font-semibold text-hotel-primary">
+              <span>Total:</span>
+              <span>
+                Rp {(85000 * editingGuest.numberOfPax).toLocaleString("id-ID")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={handleSave} className="w-full">
+          Save Changes
+        </Button>
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
+
     </>
   );
 };

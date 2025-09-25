@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, Download, LogOut } from 'lucide-react';
+import { RefreshCw, Download, LogOut, Wifi, WifiOff } from 'lucide-react';
 import { ExportRange } from '@/types/breakfast';
 
 interface HeaderProps {
   onRefresh: () => void;
   onExport: (range: ExportRange) => void;
   onLogout: () => void;
+  username: string; // tambahkan username
 }
 
-const Header: React.FC<HeaderProps> = ({ onRefresh, onExport, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onRefresh, onExport, onLogout, username }) => {
   const [exportRange, setExportRange] = useState<ExportRange>({
     from: new Date().toISOString().split('T')[0],
     to: new Date().toISOString().split('T')[0]
   });
   const [isExportOpen, setIsExportOpen] = useState(false);
+
+  // Status Online/Offline
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Realtime Clock
+  const [time, setTime] = useState<string>(new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date().toLocaleTimeString());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleExport = () => {
     onExport(exportRange);
@@ -28,6 +56,7 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, onExport, onLogout }) => {
     <header className="bg-gradient-to-r from-hotel-primary to-primary shadow-[var(--shadow-card)] text-white">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
+          
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center overflow-hidden">
@@ -40,6 +69,23 @@ const Header: React.FC<HeaderProps> = ({ onRefresh, onExport, onLogout }) => {
             <div>
               <h1 className="text-xl md:text-2xl font-bold">Breakfast Control</h1>
               <p className="text-white/80 text-sm hidden sm:block">Breakfast Management System</p>
+            </div>
+          </div>
+
+          {/* User Info + Status + Time */}
+          <div className="flex flex-col text-right">
+            <span className="font-semibold">{username}</span>
+            <div className="flex items-center justify-end gap-2 text-sm">
+              {isOnline ? (
+                <span className="flex items-center text-green-300">
+                  <Wifi className="w-4 h-4 mr-1" /> Online
+                </span>
+              ) : (
+                <span className="flex items-center text-red-300">
+                  <WifiOff className="w-4 h-4 mr-1" /> Offline
+                </span>
+              )}
+              <span className="text-white/80">{time}</span>
             </div>
           </div>
 
